@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "619220843462",
+    "project_id": "matches-24c33",
+    "storage_bucket": "matches-24c33.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619220843462:android:2f9953f121eaa8739fd0c7",
+        "android_client_info": {
+          "package_name": "com.example.inxtagoram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619220843462-qsb1sggp8gnh17du1rke007it63jj5dk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATzy97tnZ_iYnaU7_KlFCUpjiJM9CF9Mc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619220843462-qsb1sggp8gnh17du1rke007it63jj5dk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
