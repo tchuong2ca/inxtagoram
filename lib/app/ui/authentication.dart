@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+
 // import 'package:intl/intl.dart';
 // import 'package:localize/localize.dart';
 import 'package:inxtagoram/app/presenters/authentication_presenter.dart';
 import 'package:inxtagoram/app/ui/profile.dart';
+import 'package:inxtagoram/main.dart';
 import 'package:localize/localize.dart';
+
+import '../../flutter_locales.dart';
 
 class Authentication extends StatefulWidget {
   const Authentication({Key? key}) : super(key: key);
@@ -16,15 +21,10 @@ class Authentication extends StatefulWidget {
 }
 
 FirebaseFirestore fireStore = FirebaseFirestore.instance;
-const double leftAlign = -1;
-const double rightAlign = 1;
-const Color selectedColor = Colors.white;
-const Color normalColor = Colors.black54;
+
 
 class AuthenticationState extends State<Authentication> {
-  late double xAlign;
-  late Color leftbtn;
-  late Color rightbtn;
+
   final studentName = TextEditingController();
   final dateOfBirth = TextEditingController();
   late String imageUrl;
@@ -34,9 +34,6 @@ class AuthenticationState extends State<Authentication> {
   final phoneNumber = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
-  final navigatorKey = GlobalKey<NavigatorState>();
-
   AuthenticationPresenter? _presenter;
 
   @override
@@ -49,9 +46,6 @@ class AuthenticationState extends State<Authentication> {
   @override
   void initState() {
     super.initState();
-    xAlign = rightAlign;
-    leftbtn = normalColor;
-    rightbtn = selectedColor;
     _presenter = AuthenticationPresenter();
   }
 
@@ -59,147 +53,101 @@ class AuthenticationState extends State<Authentication> {
   Widget build(BuildContext context) {
     // navigatorKey: navigatorKey,
 
-    return StreamBuilder<User?>(
-
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            print("has data");
-            return FifthPage();
-          } else {
-            print("no data");
-            return Scaffold(
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                elevation: 0,
-                title: Padding(
-                  padding: const EdgeInsets.all(7),
-                  child: Row(
-                    children: [
-                      TextButton(
-                          onPressed: () {},
-                          child: Text("contact".localize,
-                              style: const TextStyle(color: Colors.blue))),
-                      const Spacer(),
-                      TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "forgotpwd".localize,
-                            style: const TextStyle(color: Colors.blue),
-                          )),
-                    ],
-                  ),
-                ),
-              ),
-              body: Padding(
-                padding: const EdgeInsets.all(7),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Text(
-                        "welcome".localize,
-                        style: const TextStyle(fontSize: 16, fontFamily: 'Railway'),
+    return DefaultTabController(
+            initialIndex: 0,
+            length: 2,
+            child: StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print("has data");
+                    return MyHomePage(
+                      title: 'MyHomePage',
+                    );
+                  } else {
+                    print("no data");
+                    return Scaffold(
+                      resizeToAvoidBottomInset: false,
+                      appBar: AppBar(
+                        systemOverlayStyle: SystemUiOverlayStyle(
+                          statusBarColor: Colors.lightBlueAccent,
+                          statusBarIconBrightness: Brightness.dark,
+                          statusBarBrightness: Brightness.light
+                        ),
+                        toolbarHeight: 0,
+                        backgroundColor: Colors.white,
+                        elevation: 0,
                       ),
-                      SizedBox(
-                        height: 40,
-                        child: Image.asset("assets/image/logo2 2.png"),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width - 50,
-                        height: 40,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15.0),
+                      body: Column(
+                        children: [
+                          LocaleText(
+                            "welcome",
+                            style: const TextStyle(
+                                fontSize: 16, fontFamily: 'Railway'),
                           ),
-                        ),
-                        child: Stack(
-                          children: [
-                            AnimatedAlign(
-                              alignment: Alignment(xAlign, 0),
-                              duration: const Duration(milliseconds: 300),
-                              child: Container(
-                                width: (MediaQuery.of(context).size.width - 50) / 2,
-                                height: 45,
-                                decoration: const BoxDecoration(
-                                  color: Colors.lightBlue,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(15.0),
-                                  ),
-                                ),
+                          SizedBox(
+                            height: 40,
+                            child: Image.asset("assets/images/logo.png"),
+                          ),
+                          TabBar(
+                            labelColor: Colors.lightBlueAccent,
+                            unselectedLabelColor: Colors.black,
+                            tabs: <Widget>[
+                              Tab(
+                                text: Locales.string(context, 'login'),
                               ),
+                              Tab(
+                                text: Locales.string(context, 'register'),
+                              )
+                            ],
+                          ),
+                          Expanded(
+                            child: TabBarView(
+                              children: [
+                                Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Column(
+                                      children: [
+                                        signInUI(),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            TextButton(
+                                                onPressed: () {},
+                                                child: LocaleText("contact",
+                                                    style: const TextStyle(
+                                                        color: Colors.blue))),
+                                            TextButton(
+                                                onPressed: () {},
+                                                child: LocaleText(
+                                                  "forgotpwd",
+                                                  style: const TextStyle(
+                                                      color: Colors.blue),
+                                                )),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                  padding: EdgeInsets.all(15),
+                                  child: signUpUI(),
+                                )
+                              ],
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  xAlign = leftAlign;
-                                  leftbtn = selectedColor;
-                                  rightbtn = normalColor;
-                                });
-                              },
-                              child: Align(
-                                alignment: const Alignment(-1, 0),
-                                child: Container(
-                                  width: (MediaQuery.of(context).size.width - 50) * 0.5,
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'login'.localize,
-                                    style: TextStyle(
-                                      color: leftbtn,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  xAlign = rightAlign;
-                                  rightbtn = selectedColor;
-                                  leftbtn = normalColor;
-                                });
-                              },
-                              child: Align(
-                                alignment: const Alignment(1, 0),
-                                child: Container(
-                                  width: (MediaQuery.of(context).size.width - 50) * 0.5,
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'register'.localize,
-                                    style: TextStyle(
-                                      color: rightbtn,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      xAlign == 1 ? signUpUI() : signInUI()
-                    ]
-                        .map(
-                          (e) => Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 10),
-                        child: e,
-                      ),
-                    )
-                        .toList(),
-                  ),
-                ),
-              ),
-            );
-          }
-        });
-
+                    );
+                  }
+                }));
   }
-
   signUpUI() {
     return Column(
       children: [
         TextField(
+          textInputAction: TextInputAction.next,
           controller: studentName,
           //onChanged: (value) => onSearch(value),
           decoration: InputDecoration(
@@ -208,9 +156,10 @@ class AuthenticationState extends State<Authentication> {
                 borderRadius: BorderRadius.circular(20),
               ),
               hintStyle: TextStyle(fontSize: 16, color: Colors.grey.shade500),
-              hintText: "studentname".localize),
+              hintText:Locales.string(context, 'studentname')),
         ),
         TextField(
+          textInputAction: TextInputAction.next,
           controller: dateOfBirth,
           readOnly: true,
           onTap: () async {
@@ -223,9 +172,11 @@ class AuthenticationState extends State<Authentication> {
                 borderRadius: BorderRadius.circular(20),
               ),
               hintStyle: TextStyle(fontSize: 16, color: Colors.grey.shade500),
-              hintText: "dateofbirth".localize),
+              hintText: Locales.string(context, 'dateofbirth')),
         ),
         TextField(
+          keyboardType: TextInputType.number,
+          textInputAction: TextInputAction.next,
           controller: phoneNumber,
           //onChanged: (value) => onSearch(value),
           decoration: InputDecoration(
@@ -234,9 +185,10 @@ class AuthenticationState extends State<Authentication> {
                 borderRadius: BorderRadius.circular(20),
               ),
               hintStyle: TextStyle(fontSize: 16, color: Colors.grey.shade500),
-              hintText: "phone".localize),
+              hintText: Locales.string(context, 'phone')),
         ),
         TextField(
+          textInputAction: TextInputAction.next,
           controller: emailController,
           //onChanged: (value) => onSearch(value),
           decoration: InputDecoration(
@@ -245,21 +197,20 @@ class AuthenticationState extends State<Authentication> {
                 borderRadius: BorderRadius.circular(20),
               ),
               hintStyle: TextStyle(fontSize: 16, color: Colors.grey.shade500),
-              hintText: "email".localize),
+              hintText: Locales.string(context, 'email')),
         ),
         TextField(
-
+          textInputAction: TextInputAction.next,
           controller: passwordController,
           obscureText: true,
           //onChanged: (value) => onSearch(value),
           decoration: InputDecoration(
-
               contentPadding: const EdgeInsets.only(left: 15),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
               hintStyle: TextStyle(fontSize: 16, color: Colors.grey.shade500),
-              hintText: "password".localize),
+              hintText: Locales.string(context, 'password')),
         ),
         SizedBox(
           height: 45,
@@ -272,7 +223,6 @@ class AuthenticationState extends State<Authentication> {
                 phoneNumber.text.trim(),
                 emailController.text.trim(),
                 passwordController.text.trim(),
-
               );
             },
             style: ElevatedButton.styleFrom(
@@ -280,16 +230,16 @@ class AuthenticationState extends State<Authentication> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0),
                 )),
-            child: Text('register'.localize),
+            child: LocaleText('register'),
           ),
         )
       ]
           .map(
             (e) => Padding(
-          padding: const EdgeInsets.only(top: 8, bottom: 10),
-          child: e,
-        ),
-      )
+              padding: const EdgeInsets.only(top: 8, bottom: 10),
+              child: e,
+            ),
+          )
           .toList(),
     );
   }
@@ -298,6 +248,7 @@ class AuthenticationState extends State<Authentication> {
     return SingleChildScrollView(
       child: Column(children: [
         TextField(
+          textInputAction: TextInputAction.next,
           controller: emailController,
           decoration: InputDecoration(
             fillColor: Colors.grey.shade100,
@@ -312,6 +263,7 @@ class AuthenticationState extends State<Authentication> {
           height: 30,
         ),
         TextField(
+          textInputAction: TextInputAction.next,
           controller: passwordController,
           obscureText: true,
           decoration: InputDecoration(
@@ -329,8 +281,8 @@ class AuthenticationState extends State<Authentication> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Sign In',
+            LocaleText(
+              'login',
               style: TextStyle(
                 color: Color(0xff4c505b),
                 fontSize: 27,
@@ -345,7 +297,6 @@ class AuthenticationState extends State<Authentication> {
                 onPressed: () {
                   _presenter!.signIn(emailController.text.trim(),
                       passwordController.text.trim());
-
                 },
                 icon: const Icon(Icons.arrow_forward),
               ),
@@ -371,5 +322,4 @@ class AuthenticationState extends State<Authentication> {
       print("Date is not selected");
     }
   }
-
 }

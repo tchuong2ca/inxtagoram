@@ -19,15 +19,15 @@ class AuthenticationPresenter{
  try{ await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
  FirebaseAuth auth = FirebaseAuth.instance;
  User? uid = auth.currentUser;
- await FirebaseFirestore.instance.collection('users').doc(uid!.uid.toString())
+ uid!.updateDisplayName(number);
+
+ await FirebaseFirestore.instance.collection('users').doc('${number}')
      .set({
    'studentName':name,
    'dateOfBirth':date,
    'phone':number,
    'userId': uid.uid.toString(),
-   'imageUrl':'null',
-   'message':'null',
-   'timeStamp':'null'
+   'email':email
  }
  );
  await signIn(email, password);
